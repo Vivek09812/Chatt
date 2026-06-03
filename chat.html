@@ -35,25 +35,18 @@ font-family:Arial;
 }
 
 body{
-
-background:
-linear-gradient(
+background:linear-gradient(
 180deg,
 #020617,
 #031525,
 #041d33
 );
-
-height:100vh;
-
+min-height:100vh;
+height:100dvh;
 display:flex;
-
 flex-direction:column;
-
 overflow:hidden;
-
 color:white;
-
 }
 
 .topbar{
@@ -159,19 +152,13 @@ linear-gradient(
 }
 
 .messages{
-
 flex:1;
-
 overflow-y:auto;
-
 padding:20px;
-
+padding-bottom:120px;
 display:flex;
-
 flex-direction:column;
-
 gap:18px;
-
 }
 
 .message{
@@ -282,23 +269,16 @@ color:white;
 }
 
 .input-area{
-
 padding:15px;
-
-background:
-rgba(255,255,255,0.05);
-
-backdrop-filter:
-blur(10px);
-
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
 display:flex;
-
 gap:12px;
+border-top:1px solid rgba(255,255,255,0.08);
 
-border-top:
-1px solid
-rgba(255,255,255,0.08);
-
+position:sticky;
+bottom:0;
+z-index:999;
 }
 
 .input{
