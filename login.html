@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>
+    Login
+  </title>
+
+  <link
+  rel="stylesheet"
+  href="style.css"
+  >
+
+</head>
+
+<body>
+
+<div class="auth-container">
+
+  <div class="auth-box">
+
+    <h1>
+      Login 🔐
+    </h1>
+
+    <input
+    type="email"
+    id="email"
+    placeholder="Enter Email"
+    >
+
+    <input
+    type="password"
+    id="password"
+    placeholder="Enter Password"
+    >
+
+    <button
+    onclick="login()"
+    >
+
+      Login
+
+    </button>
+
+    <a href="signup.html">
+
+      <button>
+
+        Create Account
+
+      </button>
+
+    </a>
+    <p
+onclick="resetPassword()"
+style="
+text-align:center;
+cursor:pointer;
+color:#00f0ff;
+font-weight:bold;
+margin-top:10px;
+"
+>
+
+Forgot Password?
+
+</p>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Private Chat</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:
+linear-gradient(
+180deg,
+#020617,
+#031525,
+#041d33
+);
+height:100vh;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+color:white;
+}
+
+.topbar{
+height:80px;
+background:
+rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+gap:15px;
+padding:0 20px;
+border-bottom:
+1px solid rgba(255,255,255,0.08);
+}
+
+.back{
+font-size:28px;
+cursor:pointer;
+}
+
+.chatname{
+font-size:22px;
+font-weight:bold;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.message{
+max-width:80%;
+padding:16px;
+border-radius:20px;
+font-size:18px;
+word-break:break-word;
+animation:fade .2s linear;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.user-message{
+margin-left:auto;
+background:
+linear-gradient(
+45deg,
+#00f0ff,
+#00ff95
+);
+color:black;
+border-bottom-right-radius:5px;
+}
+
+.other-message{
+background:
+rgba(255,255,255,0.08);
+border:
+1px solid rgba(255,255,255,0.08);
+border-bottom-left-radius:5px;
+}
+
+.bottom{
+padding:15px;
+background:
+rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+display:flex;
+gap:12px;
+border-top:
+1px solid rgba(255,255,255,0.08);
+}
+
+#messageInput{
+flex:1;
+height:58px;
+border:none;
+outline:none;
+border-radius:16px;
+padding:0 18px;
+font-size:18px;
+background:
+rgba(255,255,255,0.08);
+color:white;
+}
+
+.send{
+border:none;
+padding:0 25px;
+border-radius:16px;
+font-size:18px;
+font-weight:bold;
+background:
+linear-gradient(
+45deg,
+#00f0ff,
+#00ff95
+);
+color:black;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div
+class="back"
+onclick="history.back()"
+>
+
+←
+
+</div>
+
+<div
+class="chatname"
+id="chatName"
+>
+
+Loading...
+
+</div>
+
+</div>
+
+<div
+class="messages"
+id="messages"
+>
+
+</div>
+
+<div class="bottom">
+
+<input
+id="messageInput"
+placeholder="Type a message..."
+>
+
+<button
+class="send"
+onclick="sendMessage()"
+>
+Send
+</button>
+
+</div>
+
+<script>
+
+const username =
+localStorage.getItem(
+"chatUsername"
+)
+
+document.getElementById(
+"chatName"
+).innerText =
+username || "Private Chat"
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://sgcmrhbltlhifkqnotuh.supabase.co"
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnY21yaGJsdGxoaWZrcW5vdHVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Nzk0MjcsImV4cCI6MjA5NTM1NTQyN30.UB2dL80N6qBRHwoJ8QlNfSJeQxPJsovOzyQxqBx5gMg"
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+)
+
+</script>
+<script>
+
+async function sendMessage(){
+
+const msg =
+document.getElementById(
+"messageInput"
+).value
+
+if(!msg){
+return
+}
+
+const {
+data:{user}
+}
+=
+await supabaseClient.auth.getUser()
+
+const receiverEmail =
+localStorage.getItem(
+"chatEmail"
+)
+
+await supabaseClient
+.from(
+"private_messages"
+)
+.insert([
+{
+sender_email:
+user.email,
+
+receiver_email:
+receiverEmail,
+
+message:
+msg,
+
+time:
+new Date()
+.toLocaleString(),
+
+seen:false
+}
+])
+
+document
+.getElementById(
+"messageInput"
+).value = ""
+
+await loadMessages()
+
+}
+async function deleteMessage(id){
+
+await supabaseClient
+.from("private_messages")
+.delete()
+.eq("id", id)
+
+loadMessages()
+
+}
+async function loadMessages(){
+
+const {
+data:{user}
+}
+=
+await supabaseClient.auth.getUser()
+
+const receiverEmail =
+localStorage.getItem(
+"chatEmail"
+)
+
+const {
+data
+}
+=
+await supabaseClient
+.from("private_messages")
+.select("*")
+
+if(!data){
+return
+}
+
+let html = ""
+
+data.forEach(msg=>{
+
+if(
+
+(
+msg.sender_email.toLowerCase() === user.email.toLowerCase()
+&&
+msg.receiver_email.toLowerCase() === receiverEmail.toLowerCase()
+)
+
+||
+
+(
+msg.sender_email.toLowerCase() === receiverEmail.toLowerCase()
+&&
+msg.receiver_email.toLowerCase() === user.email.toLowerCase()
+)
+
+){
+
+html += `
+<div class="${
+msg.sender_email.toLowerCase() === user.email.toLowerCase()
+? 'message user-message'
+: 'message other-message'
+}">
+    
+<b>
+${
+msg.sender_email.toLowerCase() === user.email.toLowerCase()
+? 'You 😎'
+: username
+}
+</b>
+
+<br><br>
+
+${msg.message}
+
+<br><br>
+
+⏰ ${msg.time}
+
+${
+msg.sender_email.toLowerCase() === user.email.toLowerCase()
+?
+`
+<br><br>
+
+<button
+onclick="deleteMessage(${msg.id})"
+style="
+background:red;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:10px;
+"
+>
+Delete
+</button>
+`
+:
+''
+}
+
+</div>
+`
+
+}
+
+})
+
+document.getElementById(
+"messages"
+).innerHTML = html
+
+const box =
+document.getElementById(
+"messages"
+)
+box.scrollTop = box.scrollHeight
+}
+
+
+loadMessages()
+
+supabaseClient
+.channel('private-chat')
+.on(
+'postgres_changes',
+{
+event:'INSERT',
+schema:'public',
+table:'private_messages'
+},
+() => {
+loadMessages()
+}
+)
+.subscribe()
+</script>
+</body>
+</html>

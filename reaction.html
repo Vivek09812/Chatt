@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Secure Hub - Lost Vivek ‼️</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() { emailjs.init("PvSgTahKrHC7mchSK"); })();
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --card-bg: rgba(24, 24, 27, 0.85);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary: #10b981; 
+            --primary-hover: #059669;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(39, 39, 42, 0.6);
+            --glow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 {
+            font-size: 30px; font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        .header p { color: var(--text-muted); font-size: 14px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; gap: 0; } }
+
+        .form-group { position: relative; margin-bottom: 20px; }
+        .form-control {
+            width: 100%; padding: 15px; background: var(--input-bg);
+            border: 1px solid var(--border-color); border-radius: 10px;
+            color: var(--text-main); font-size: 14px; outline: none; transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: var(--glow); background: rgba(39, 39, 42, 0.9); }
+        .form-control::placeholder { color: transparent; }
+        
+        .floating-label {
+            position: absolute; left: 15px; top: 15px; color: var(--text-muted);
+            font-size: 14px; pointer-events: none; transition: 0.3s ease all;
+        }
+        .form-control:focus ~ .floating-label, .form-control:not(:placeholder-shown) ~ .floating-label {
+            top: -10px; left: 10px; font-size: 12px; background: var(--bg-color); padding: 0 5px;
+            color: var(--primary); border-radius: 4px;
+        }
+
+        /* Action Buttons */
+        .action-hub { display: flex; gap: 10px; margin-bottom: 15px; }
+        .action-btn {
+            flex: 1; padding: 12px 5px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color); border-radius: 10px;
+            color: var(--text-main); font-size: 13px; cursor: pointer;
+            transition: 0.3s;
+        }
+        .action-btn:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--primary); }
+        .action-btn.active-record { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { box-shadow: 0 0 10px var(--danger); } }
+
+        /* Media Previews */
+        .media-preview-container {
+            display: none; flex-direction: column; align-items: center;
+            background: var(--input-bg); border: 1px dashed var(--border-color);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        #camera-video { width: 100%; max-width: 300px; border-radius: 8px; margin-bottom: 10px; background: #000; }
+        #camera-canvas { display: none; }
+        
+        .capture-btn {
+            background: var(--primary); color: #000; border: none; padding: 8px 15px;
+            border-radius: 6px; font-weight: 600; cursor: pointer; margin: 5px; font-size: 13px;
+        }
+        .capture-btn.stop { background: var(--danger); color: #fff; }
+        
+        .file-list { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .file-chip { background: rgba(16, 185, 129, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .submit-btn {
+            width: 100%; padding: 15px; background: var(--primary); color: #000;
+            border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+            cursor: pointer; transition: 0.3s; margin-bottom: 20px;
+        }
+        .submit-btn:hover:not(:disabled) { background: var(--primary-hover); box-shadow: var(--glow); transform: translateY(-2px); }
+
+        /* Emoji Section */
+        .emoji-section { border-top: 1px solid var(--border-color); padding-top: 15px; text-align: center; }
+        .emoji-section p { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+        .emoji-btn-wrapper { display: flex; justify-content: center; gap: 10px; }
+        .emoji-click-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color);
+            font-size: 22px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .emoji-click-btn:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--primary); transform: scale(1.15); }
+        .emoji-click-btn:active { transform: scale(0.9); }
+
+        #status-msg { margin-top: 15px; text-align: center; font-size: 13px; font-weight: 500; height: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="contact-card">
+        <div class="header">
+            <h2>Anonymous Hub</h2>
+            <p>Send direct messages to the channel</p>
+        </div>
+        
+        <form id="contactForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="text" id="name" class="form-control" placeholder="Name" autocomplete="off">
+                    <label class="floating-label">Alias / Name (Optional)</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" class="form-control" placeholder="Email" autocomplete="off">
+                    <label class="floating-label">Email (Optional)</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="tel" id="phone" class="form-control" placeholder="Phone" autocomplete="off">
+                    <label class="floating-label">Phone (Optional)</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="social_handle" class="form-control" placeholder="Social" autocomplete="off">
+                    <label class="floating-label">Insta/X Handle (Optional)</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <textarea id="message" class="form-control" rows="4" placeholder="Message" required></textarea>
+                <label class="floating-label">Secret Message *</label>
+            </div>
+
+            <div class="action-hub">
+                <button type="button" class="action-btn" onclick="document.getElementById('media_upload').click()">📁 Files</button>
+                <button type="button" class="action-btn" id="btn-camera" onclick="openCamera()">📷 Live Selfie</button>
+                <button type="button" class="action-btn" id="btn-mic" onclick="toggleRecording()">🎙️ Voice Note</button>
+                <input type="file" id="media_upload" style="display:none;" multiple>
+            </div>
+
+            <div class="media-preview-container" id="camera-container">
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Live Camera</p>
+                <video id="camera-video" autoplay playsinline></video>
+                <canvas id="camera-canvas"></canvas>
+                <img id="camera-preview" style="display:none; width:100%; max-width:300px; border-radius:8px; margin-bottom:10px;"/>
+                <div>
+                    <button type="button" class="capture-btn" id="snap-btn" onclick="takeSnapshot()">📸 Capture</button>
+                    <button type="button" class="capture-btn" style="background:#555;" onclick="closeCamera()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="media-preview-container" id="audio-container">
+                <p id="audio-status" style="font-size:13px; color:var(--primary); font-weight:bold; margin-bottom:5px;">Recording...</p>
+                <audio id="audio-playback" controls style="display:none; width:100%; margin-bottom:10px;"></audio>
+                <div>
+                    <button type="button" class="capture-btn stop" id="stop-audio-btn" onclick="toggleRecording()">⏹️ Stop</button>
+                    <button type="button" class="capture-btn" style="background:#555; display:none;" id="discard-audio-btn" onclick="discardAudio()">Discard</button>
+                </div>
+            </div>
+
+            <div class="file-list" id="file-list"></div>
+            
+            <button type="submit" id="submitBtn" class="submit-btn">
+                <span class="btn-text">Send Message Securely</span>
+            </button>
+        </form>
+
+        <div class="emoji-section">
+            <p>Instant Anonymous Reaction (Spam-Friendly ⚡)</p>
+            <div class="emoji-btn-wrapper">
+                <button class="emoji-click-btn" onclick="sendEmojiReaction('🔥')">🔥</button>
+                <button class="emoji-click-btn" onclick="sendEmojiReaction('🚀')">🚀</button>
+                <button class="emoji-click-btn" onclick="sendEmojiReaction('👻')">👻</button>
+                <button class="emoji-click-btn" onclick="sendEmojiReaction('❤️')">❤️</button>
+                <button class="emoji-click-btn" onclick="sendEmojiReaction('💯')">💯</button>
+            </div>
+        </div>
+
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        // --- API CONFIGURATION ---
+        const botToken = '8797317124:AAFPBsMjALUeWA_zzVIbHPYziPZBPr_O4W0';
+        const chatId = '@RADHE_EARNERSS'; 
+
+        // --- FILE UI LOGIC ---
+        const fileInput = document.getElementById('media_upload');
+        const fileList = document.getElementById('file-list');
+        fileInput.addEventListener('change', updateUIList);
+
+        let capturedImageBlob = null;
+        let capturedAudioBlob = null;
+
+        function updateUIList() {
+            fileList.innerHTML = '';
+            Array.from(fileInput.files).forEach(file => addChip(`📁 ${file.name}`));
+            if(capturedImageBlob) addChip(`📷 Live_Selfie.jpg`);
+            if(capturedAudioBlob) addChip(`🎙️ Voice_Note.webm`);
+        }
+        function addChip(text) {
+            let chip = document.createElement('div');
+            chip.className = 'file-chip';
+            chip.innerText = text.length > 20 ? text.substring(0, 20) + '...' : text;
+            fileList.appendChild(chip);
+        }
+
+        // --- CAMERA LOGIC ---
+        let videoStream = null;
+        async function openCamera() {
+            const container = document.getElementById('camera-container');
+            const video = document.getElementById('camera-video');
+            const preview = document.getElementById('camera-preview');
+            const snapBtn = document.getElementById('snap-btn');
+            
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                video.srcObject = videoStream;
+                video.style.display = 'block'; preview.style.display = 'none';
+                snapBtn.style.display = 'inline-block'; container.style.display = 'flex';
+                capturedImageBlob = null; updateUIList();
+            } catch (err) {
+                alert("Camera requires secure HTTPS connection.");
+            }
+        }
+        function takeSnapshot() {
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            const preview = document.getElementById('camera-preview');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob(blob => {
+                capturedImageBlob = blob;
+                preview.src = URL.createObjectURL(blob);
+                video.style.display = 'none'; preview.style.display = 'block';
+                document.getElementById('snap-btn').style.display = 'none';
+                updateUIList();
+                videoStream.getTracks().forEach(t => t.stop());
+            }, 'image/jpeg', 0.8);
+        }
+        function closeCamera() {
+            document.getElementById('camera-container').style.display = 'none';
+            if(videoStream) videoStream.getTracks().forEach(t => t.stop());
+            capturedImageBlob = null; updateUIList();
+        }
+
+        // --- AUDIO LOGIC ---
+        let mediaRecorder; let audioChunks = []; let isRecording = false;
+        async function toggleRecording() {
+            const btnMic = document.getElementById('btn-mic');
+            const container = document.getElementById('audio-container');
+            const statusTxt = document.getElementById('audio-status');
+            const stopBtn = document.getElementById('stop-audio-btn');
+            const discardBtn = document.getElementById('discard-audio-btn');
+            const playback = document.getElementById('audio-playback');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                    mediaRecorder.onstop = () => {
+                        capturedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        playback.src = URL.createObjectURL(capturedAudioBlob);
+                        playback.style.display = 'block'; statusTxt.textContent = "Voice Note Ready!";
+                        stopBtn.style.display = 'none'; discardBtn.style.display = 'inline-block';
+                        updateUIList();
+                    };
+                    mediaRecorder.start(); isRecording = true; btnMic.classList.add('active-record');
+                    container.style.display = 'flex'; playback.style.display = 'none';
+                    stopBtn.style.display = 'inline-block'; discardBtn.style.display = 'none';
+                    statusTxt.textContent = "🎙️ Recording... Speak now!";
+                } catch (err) { alert("Mic requires secure HTTPS connection."); }
+            } else {
+                mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(t => t.stop());
+                isRecording = false; btnMic.classList.remove('active-record');
+            }
+        }
+        function discardAudio() {
+            document.getElementById('audio-container').style.display = 'none';
+            capturedAudioBlob = null; updateUIList();
+        }
+
+        // --- EMOJI REACTION (SPAM) ---
+        function sendEmojiReaction(emoji) {
+            const status = document.getElementById('status-msg');
+            status.textContent = `Sending reaction: ${emoji}`;
+            status.style.color = "var(--primary)";
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: `⚡ <b>Reaction on Hub:</b> ${emoji}`, parse_mode: 'HTML' })
+            }).catch(() => {});
+            setTimeout(() => { if(status.textContent.includes("reaction")) status.textContent = ""; }, 1500);
+        }
+
+        // --- CORE FORM SUBMISSION ---
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const status = document.getElementById('status-msg');
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.querySelector('.btn-text');
+
+            btn.disabled = true;
+            btnText.textContent = "Encrypting Data...";
+            status.textContent = "Connecting to Channel API...";
+            status.style.color = "var(--text-muted)";
+            
+            // 1. Gather Data
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const social = document.getElementById('social_handle').value.trim();
+            const msg = document.getElementById('message').value.trim();
+
+            try {
+                // 2. Build Smart Message (Only adds filled fields)
+                let tgMessage = "";
+                if (name || email || phone || social) {
+                    tgMessage += `🕵️‍♂️ <b>DROP DETAILS</b> 🕵️‍♂️\n\n`;
+                    if (name) tgMessage += `👤 <b>Name:</b> ${name}\n`;
+                    if (email) tgMessage += `📧 <b>Email:</b> ${email}\n`;
+                    if (phone) tgMessage += `📱 <b>Phone:</b> ${phone}\n`;
+                    if (social) tgMessage += `📸 <b>Social:</b> ${social}\n`;
+                    tgMessage += `\n📝 <b>Message:</b>\n<i>" ${msg} "</i>`;
+                } else {
+                    tgMessage = `<i>${msg}</i>`; // Just raw message if form is blank
+                }
+
+                // 3. Collect ALL Media into one queue
+                let mediaQueue = [];
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    mediaQueue.push({ type: 'document', blob: fileInput.files[i], name: fileInput.files[i].name });
+                }
+                if (capturedImageBlob) mediaQueue.push({ type: 'photo', blob: capturedImageBlob, name: 'live_selfie.jpg' });
+                if (capturedAudioBlob) mediaQueue.push({ type: 'voice', blob: capturedAudioBlob, name: 'voice_note.webm' });
+
+                // 4. Transmission Logic (Caption vs Standalone)
+                if (mediaQueue.length === 0) {
+                    // No media? Just send the text message directly.
+                    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: chatId, text: tgMessage, parse_mode: 'HTML' })
+                    });
+                } else {
+                    // We have media! Send the first file with the caption.
+                    let firstMedia = mediaQueue[0];
+                    let formData = new FormData();
+                    formData.append('chat_id', chatId);
+                    formData.append(firstMedia.type, firstMedia.blob, firstMedia.name);
+                    
+                    // Telegram captions have a 1024 char limit.
+                    if (tgMessage.length < 1000) {
+                        formData.append('caption', tgMessage);
+                        formData.append('parse_mode', 'HTML');
+                        
+                        let endpoint = firstMedia.type.charAt(0).toUpperCase() + firstMedia.type.slice(1);
+                        await fetch(`https://api.telegram.org/bot${botToken}/send${endpoint}`, { method: 'POST', body: formData });
+                    } else {
+                        // If message is too huge for a caption, send text first, then media without caption.
+                        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ chat_id: chatId, text: tgMessage, parse_mode: 'HTML' })
+                        });
+                        let endpoint = firstMedia.type.charAt(0).toUpperCase() + firstMedia.type.slice(1);
+                        await fetch(`https://api.telegram.org/bot${botToken}/send${endpoint}`, { method: 'POST', body: formData });
+                    }
+
+                    // Send any remaining files in the queue (without captions)
+                    for (let i = 1; i < mediaQueue.length; i++) {
+                        btnText.textContent = `Sending File ${i + 1}/${mediaQueue.length}...`;
+                        let m = mediaQueue[i];
+                        let fd = new FormData();
+                        fd.append('chat_id', chatId);
+                        fd.append(m.type, m.blob, m.name);
+                        let endpoint = m.type.charAt(0).toUpperCase() + m.type.slice(1);
+                        await fetch(`https://api.telegram.org/bot${botToken}/send${endpoint}`, { method: 'POST', body: fd });
+                    }
+                }
+
+                // 5. Complete! Reset Form.
+                status.textContent = "Data pushed to the channel successfully! ✨";
+                status.style.color = "var(--primary)";
+                document.getElementById('contactForm').reset();
+                closeCamera(); discardAudio(); fileInput.value = ''; updateUIList();
+
+            } catch (error) {
+                console.error(error);
+                status.textContent = "Network error or API blocked. Try again.";
+                status.style.color = "#ef4444"; 
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = "Send Message Securely";
+                setTimeout(() => { if(status.textContent.includes("successfully")) status.textContent = ""; }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

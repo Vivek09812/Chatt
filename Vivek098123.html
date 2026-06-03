@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="
+width=device-width,
+initial-scale=1.0
+">
+
+<title>
+Admin Panel
+</title>
+
+<script src="
+https://cdn.jsdelivr.net/npm/@supabase/supabase-js
+"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+background:
+linear-gradient(
+180deg,
+#020617,
+#031525,
+#041d33
+);
+
+color:white;
+
+padding:20px;
+
+overflow-x:hidden;
+
+}
+
+/* TOP */
+
+.top{
+
+display:flex;
+
+justify-content:
+space-between;
+
+align-items:center;
+
+margin-bottom:30px;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+}
+
+.logo{
+
+font-size:42px;
+
+font-weight:bold;
+
+color:#00f7ff;
+
+}
+
+.top-buttons{
+
+display:flex;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+}
+
+/* BUTTONS */
+
+button{
+
+border:none;
+
+padding:
+13px 20px;
+
+border-radius:15px;
+
+font-size:17px;
+
+font-weight:bold;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+.logout{
+
+background:
+linear-gradient(
+45deg,
+#ff005d,
+#ff4d00
+);
+
+}
+
+.maintenance-on{
+
+background:
+linear-gradient(
+45deg,
+orange,
+red
+);
+
+}
+
+.maintenance-off{
+
+background:
+linear-gradient(
+45deg,
+#00ff95,
+#00b894
+);
+
+}
+
+.reply{
+
+background:
+linear-gradient(
+45deg,
+#00f0ff,
+#00ff95
+);
+
+color:black;
+
+}
+
+.delete{
+
+background:
+linear-gradient(
+45deg,
+#ff005d,
+red
+);
+
+}
+
+.ban{
+
+background:
+linear-gradient(
+45deg,
+purple,
+#6c5ce7
+);
+
+}
+
+.unban{
+
+background:
+linear-gradient(
+45deg,
+#0984e3,
+#00a8ff
+);
+
+}
+
+/* USER CARD */
+
+.user-card{
+
+background:
+rgba(255,255,255,0.05);
+
+border:
+1px solid
+rgba(255,255,255,0.08);
+
+border-radius:25px;
+
+padding:22px;
+
+margin-bottom:25px;
+
+backdrop-filter:
+blur(10px);
+
+animation:
+fade 0.2s linear;
+
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
+
+}
+
+.email{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#00ffee;
+
+word-break:break-word;
+
+margin-bottom:10px;
+
+}
+
+.status{
+
+font-size:16px;
+
+color:#00ff95;
+
+margin-bottom:20px;
+
+line-height:1.7;
+
+}
+
+/* MESSAGE */
+
+.message-box{
+
+background:
+rgba(255,255,255,0.04);
+
+padding:16px;
+
+border-radius:18px;
+
+margin-top:15px;
+
+}
+
+.msg{
+
+font-size:22px;
+
+word-break:break-word;
+
+margin-bottom:10px;
+
+line-height:1.5;
+
+}
+
+.time{
+
+font-size:14px;
+
+opacity:0.7;
+
+margin-bottom:15px;
+
+}
+
+.msg-buttons{
+
+display:flex;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+}
+
+/* EMPTY */
+
+.empty{
+
+text-align:center;
+
+margin-top:100px;
+
+font-size:30px;
+
+color:#94a3b8;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- TOP -->
+
+<div class="top">
+<div
+id="stats"
+style="
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-bottom:25px;
+"
+>
+
+</div>
+<div class="logo">
+Admin Panel 👑
+</div>
+
+<div class="top-buttons">
+    
+    <button
+class="reply"
+onclick="
+broadcastMessage()
+"
+>
+
+Broadcast
+
+</button>
+
+<button
+class="maintenance-on"
+onclick="
+enableMaintenance()
+"
+>
+
+Enable Maintenance
+
+</button>
+
+<button
+class="maintenance-off"
+onclick="
+disableMaintenance()
+"
+>
+
+Disable Maintenance
+
+</button>
+
+<button
+class="logout"
+onclick="
+logout()
+"
+>
+
+Logout
+
+</button>
+
+</div>
+
+</div>
+
+<!-- USERS -->
+
+<div id="users">
+
+</div>
+
+<script>
+    /* =========================
+ADMIN SECURITY
+========================= */
+
+const adminPassword =
+"Vivek@098123"
+
+const enteredPassword =
+prompt(
+"Enter Admin Password"
+)
+
+if(
+enteredPassword !==
+adminPassword
+){
+
+alert(
+"Wrong Password ❌"
+)
+
+window.location.href =
+"login.html"
+
+}
+
+/* =========================
+SUPABASE
+========================= */
+
+const supabaseUrl =
+"https://sgcmrhbltlhifkqnotuh.supabase.co"
+
+const supabaseKey =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnY21yaGJsdGxoaWZrcW5vdHVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Nzk0MjcsImV4cCI6MjA5NTM1NTQyN30.UB2dL80N6qBRHwoJ8QlNfSJeQxPJsovOzyQxqBx5gMg"
+
+const adminClient =
+window.supabase.createClient(
+supabaseUrl,
+supabaseKey
+)
+
+/* =========================
+GLOBAL
+========================= */
+
+let oldAdminHTML = ""
+
+/* =========================
+LOAD USERS
+========================= */
+async function loadStats(){
+
+const {
+count:userCount
+}
+=
+await adminClient
+.from("users")
+.select(
+"*",
+{
+count:"exact",
+head:true
+}
+)
+
+const {
+count:messageCount
+}
+=
+await adminClient
+.from("messages")
+.select(
+"*",
+{
+count:"exact",
+head:true
+}
+)
+const {
+count:privateMessageCount
+}
+=
+await adminClient
+.from("private_messages")
+.select(
+"*",
+{
+count:"exact",
+head:true
+}
+)
+
+const {
+count:onlineCount
+}
+=
+await adminClient
+.from("users")
+.select(
+"*",
+{
+count:"exact",
+head:true
+}
+)
+.eq(
+"online",
+true
+)
+
+document.getElementById(
+"stats"
+).innerHTML = `
+
+<div style="
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+">
+👥 Users<br><br>
+<b>${userCount || 0}</b>
+</div>
+
+<div style="
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+">
+💬 Messages<br><br>
+<b>${messageCount || 0}</b>
+<div style="
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+">
+📨 Private Messages
+<br><br>
+<b>${privateMessageCount || 0}</b>
+</div>
+</div>
+
+<div style="
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+">
+🟢 Online<br><br>
+<b>${onlineCount || 0}</b>
+</div>
+
+<div style="
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+">
+👑 Admin Panel
+<br><br>
+<b>Active</b>
+</div>
+
+`
+
+}
+async function loadUsers(){
+
+const usersDiv =
+document.getElementById(
+"users"
+)
+
+const {
+
+data,
+error
+
+} =
+await adminClient
+.from("messages")
+.select("*")
+.order(
+"id",
+{
+ascending:false
+}
+)
+
+if(error){
+
+console.log(error)
+
+usersDiv.innerHTML =
+"<div class='empty'>Error Loading Chats</div>"
+
+return
+
+}
+
+if(
+!data ||
+data.length==0
+){
+
+usersDiv.innerHTML =
+"<div class='empty'>No Chats Found</div>"
+
+return
+
+}
+
+/* GROUP */
+
+const grouped = {}
+
+data.forEach(msg=>{
+
+if(
+!grouped[msg.user_email]
+){
+
+grouped[msg.user_email] = []
+
+}
+
+grouped[msg.user_email]
+.push(msg)
+
+})
+
+let newHTML = ""
+
+/* SHOW USERS */
+
+for(
+const email
+in grouped
+){
+
+const {
+
+data:userData
+
+} =
+await adminClient
+.from("users")
+.select("*")
+.eq(
+"email",
+email
+)
+.single()
+
+let allMessages = ""
+
+grouped[email]
+.forEach(msg=>{
+
+allMessages += `
+
+<div class="
+message-box
+">
+
+<div class="
+msg
+">
+
+${msg.type=="admin"
+? "👑 Admin:"
+: "💬 User:"}
+
+<br><br>
+
+${msg.message}
+
+</div>
+
+<div class="
+time
+">
+
+⏰
+${msg.time || ""}
+
+&nbsp;&nbsp;
+
+${msg.seen
+? "✔✔ Seen"
+: "✔ Sent"}
+
+</div>
+
+<div class="
+msg-buttons
+">
+
+<button
+class="reply"
+
+onclick="
+replyUser(
+'${email}'
+)
+">
+
+Reply
+
+</button>
+
+<button
+class="delete"
+
+onclick="
+deleteMessage(
+${msg.id}
+)
+">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+newHTML += `
+
+<div class="
+user-card
+">
+
+<div class="
+email
+">
+
+📧 ${email}
+
+</div>
+
+<div class="
+status
+">
+
+${userData?.online
+? "🟢 Online"
+: "⚫ Offline"}
+
+<br>
+
+${userData?.typing
+? "✍️ Typing..."
+: ""}
+
+<br>
+
+🕒 Last Seen:
+${userData?.last_seen || ""}
+
+</div>
+
+${allMessages}
+
+<div
+class="
+msg-buttons
+"
+style="
+margin-top:20px;
+"
+>
+
+<button
+class="ban"
+
+onclick="
+banUser(
+'${email}'
+)
+">
+
+Ban
+
+</button>
+
+<button
+class="unban"
+
+onclick="
+unbanUser(
+'${email}'
+)
+">
+
+Unban
+
+</button>
+
+<button
+class="reply"
+onclick="
+editUser(
+'${email}'
+)
+">
+Edit Profile
+</button>
+
+</div>
+
+</div>
+
+`
+
+}
+
+/* UPDATE ONLY IF CHANGED */
+
+if(
+oldAdminHTML !==
+newHTML
+){
+
+usersDiv.innerHTML =
+newHTML
+
+oldAdminHTML =
+newHTML
+
+}
+
+}
+
+/* =========================
+REPLY
+========================= */
+
+async function replyUser(email){
+
+const reply =
+prompt(
+"Reply To:\n\n" +
+email
+)
+
+if(!reply){
+
+return
+
+}
+
+const currentTime =
+new Date()
+.toLocaleTimeString()
+
+await adminClient
+.from("messages")
+.insert([{
+
+user_email:email,
+
+message:reply,
+
+type:"admin",
+
+time:currentTime,
+
+seen:false
+
+}])
+
+alert(
+"Reply Sent ✅"
+)
+
+loadUsers()
+
+}
+
+async function broadcastMessage(){
+
+const message =
+prompt(
+"Enter Broadcast Message"
+)
+
+if(!message){
+return
+}
+
+const {
+data:users
+}
+=
+await adminClient
+.from("users")
+.select("*")
+
+for(
+const user of users
+){
+
+await adminClient
+.from("messages")
+.insert([{
+
+user_email:
+user.email,
+
+message:
+message,
+
+type:"admin",
+
+time:
+new Date()
+.toLocaleTimeString(),
+
+seen:false
+
+}])
+
+}
+
+alert(
+"Broadcast Sent To All Users 🚀"
+)
+
+loadUsers()
+
+}
+
+/* =========================
+DELETE
+========================= */
+
+async function deleteMessage(id){
+
+await adminClient
+.from("messages")
+.delete()
+.eq(
+"id",
+id
+)
+
+loadUsers()
+
+}
+
+/* =========================
+BAN
+========================= */
+
+async function banUser(email){
+
+await adminClient
+.from("users")
+.update({
+
+banned:true
+
+})
+.eq(
+"email",
+email
+)
+
+alert(
+"User Banned 🚫"
+)
+
+}
+
+/* =========================
+UNBAN
+========================= */
+
+async function unbanUser(email){
+
+await adminClient
+.from("users")
+.update({
+
+banned:false
+
+})
+.eq(
+"email",
+email
+)
+
+alert(
+"User Unbanned ✅"
+)
+
+}
+async function editUser(email){
+
+const {
+data:userData
+}
+=
+await adminClient
+.from("users")
+.select("*")
+.eq("email", email)
+.single()
+
+const newUsername =
+prompt(
+"New Username",
+userData.username || ""
+)
+
+if(!newUsername){
+return
+}
+
+await adminClient
+.from("users")
+.update({
+username:newUsername
+})
+.eq("email", email)
+
+alert(
+"Username Updated ✅"
+)
+
+loadUsers()
+
+}
+
+/* =========================
+MAINTENANCE ON
+========================= */
+
+async function enableMaintenance(){
+
+await adminClient
+.from("settings")
+.update({
+
+maintenance:true
+
+})
+.eq(
+"id",
+1
+)
+
+alert(
+"Maintenance Enabled 🛠️"
+)
+
+}
+
+/* =========================
+MAINTENANCE OFF
+========================= */
+
+async function disableMaintenance(){
+
+await adminClient
+.from("settings")
+.update({
+
+maintenance:false
+
+})
+.eq(
+"id",
+1
+)
+
+alert(
+"Maintenance Disabled ✅"
+)
+
+}
+
+/* =========================
+LOGOUT
+========================= */
+
+function logout(){
+
+window.location.href =
+"login.html"
+
+}
+
+/* =========================
+AUTO REFRESH
+========================= */
+
+setInterval(()=>{
+
+loadUsers()
+
+loadStats()
+
+setInterval(
+loadStats,
+5000
+)
+
+},3000)
+
+/* =========================
+START
+========================= */
+
+loadUsers()
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>New Chat</title>
+
+<style>
+
+body{
+background:#0b141a;
+color:white;
+font-family:Arial;
+margin:0;
+}
+
+.topbar{
+background:#202c33;
+padding:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+.search{
+padding:15px;
+display:flex;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+}
+
+#searchResult{
+padding:15px;
+}
+
+.user{
+padding:15px;
+border-bottom:1px solid #333;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+New Chat
+
+</div>
+
+<div class="search">
+
+<input
+id="searchUsername"
+placeholder="Search Username..."
+>
+
+<button
+onclick="searchUser()"
+>
+
+Search
+
+</button>
+
+</div>
+
+<div id="searchResult">
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://sgcmrhbltlhifkqnotuh.supabase.co"
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnY21yaGJsdGxoaWZrcW5vdHVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Nzk0MjcsImV4cCI6MjA5NTM1NTQyN30.UB2dL80N6qBRHwoJ8QlNfSJeQxPJsovOzyQxqBx5gMg"
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+)
+
+async function searchUser(){
+
+const username =
+document.getElementById(
+"searchUsername"
+).value
+
+const {
+data
+}
+=
+await supabaseClient
+.from("users")
+.select("*")
+.eq(
+"username",
+username
+)
+
+let html = ""
+
+data.forEach(user=>{
+
+html += `
+
+<div
+class="user"
+onclick="
+localStorage.setItem(
+'chatEmail',
+'${user.email}'
+);
+
+localStorage.setItem(
+'chatUsername',
+'${user.username}'
+);
+
+window.location.href=
+'private-chat.html';
+"
+>
+
+👤 ${user.username}
+
+</div>
+
+`
+
+})
+
+document.getElementById(
+"searchResult"
+).innerHTML = html
+
+}
+
+</script>
+
+</body>
+</html>

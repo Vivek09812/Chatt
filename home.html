@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>
+Chats
+</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(
+180deg,
+#050b14,
+#081018,
+#0c1524
+);
+min-height:100vh;
+color:white;
+overflow-x:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+top:-150px;
+left:-150px;
+width:300px;
+height:300px;
+background:#00ff88;
+filter:blur(150px);
+opacity:.15;
+}
+
+body::after{
+content:"";
+position:fixed;
+bottom:-150px;
+right:-150px;
+width:300px;
+height:300px;
+background:#00aaff;
+filter:blur(150px);
+opacity:.15;
+}
+
+.topbar{
+padding:35px 25px;
+background:linear-gradient(
+135deg,
+#132232,
+#1f3548
+);
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.topbar{
+animation:slideDown .8s ease;
+}
+
+@keyframes slideDown{
+from{
+opacity:0;
+transform:translateY(-40px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.topbar{
+font-size:34px;
+font-weight:900;
+letter-spacing:1px;
+}
+
+#usersList{
+padding:15px;
+}
+
+.chat{
+background:rgba(20,35,50,.9);
+border:1px solid rgba(255,255,255,.08);
+border-radius:20px;
+padding:22px;
+margin-bottom:15px;
+font-size:22px;
+font-weight:600;
+cursor:pointer;
+
+backdrop-filter:blur(15px);
+
+box-shadow:
+0 8px 30px rgba(0,0,0,.3);
+
+transition:.35s;
+animation:fadeUp .5s ease;
+}
+
+.chat:hover{
+transform:
+translateY(-4px)
+scale(1.02);
+
+background:#1b2d3f;
+
+box-shadow:
+0 15px 40px rgba(0,255,136,.15);
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.newChatBtn{
+z-index:9999 !important;
+position:fixed;
+right:20px;
+bottom:20px;
+position:fixed;
+right:25px;
+bottom:25px;
+
+width:70px;
+height:70px;
+
+border-radius:50%;
+
+background:linear-gradient(
+135deg,
+#00ff88,
+#00d26a
+);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:34px;
+font-weight:bold;
+
+color:white;
+
+cursor:pointer;
+
+box-shadow:
+0 10px 30px rgba(0,255,136,.4);
+
+transition:.3s;
+
+animation:pulse 2s infinite;
+}
+
+.newChatBtn:hover{
+transform:scale(1.1);
+}
+
+@keyframes pulse{
+0%{
+box-shadow:
+0 0 0 0 rgba(0,255,136,.5);
+}
+70%{
+box-shadow:
+0 0 0 20px rgba(0,255,136,0);
+}
+100%{
+box-shadow:
+0 0 0 0 rgba(0,255,136,0);
+}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+CHAMBAL CHAT<br>
+<span style="
+font-size:14px;
+font-weight:normal;
+color:#b0b0b0;
+">
+Welcome 👋
+</span>
+
+</div>
+
+<div id="usersList">
+
+</div>
+<div
+class="newChatBtn"
+onclick="
+window.location.href='new-chat.html'
+"
+>
+
+➕
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://sgcmrhbltlhifkqnotuh.supabase.co"
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnY21yaGJsdGxoaWZrcW5vdHVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Nzk0MjcsImV4cCI6MjA5NTM1NTQyN30.UB2dL80N6qBRHwoJ8QlNfSJeQxPJsovOzyQxqBx5gMg"
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+)
+
+async function deleteChat(email){
+
+const {
+data:{user}
+}
+=
+await supabaseClient.auth.getUser()
+
+if(
+!confirm(
+"Delete this chat?"
+)
+){
+return
+}
+
+await supabaseClient
+.from("deleted_chats")
+.insert([
+{
+user_email:user.email,
+chat_email:email
+}
+])
+
+loadUsers()
+
+}
+
+async function loadUsers(){
+
+const {
+data:{user}
+}
+=
+await supabaseClient.auth.getUser()
+
+const {
+data
+}
+=
+await supabaseClient
+.from("private_messages")
+.select("*")
+.or(
+`sender_email.eq.${user.email},receiver_email.eq.${user.email}`
+)
+
+let html = `
+
+<div
+class="chat"
+onclick="
+window.location.href=
+'chat.html'
+"
+>
+
+👑 Admin Support
+
+</div>
+
+`
+const chats = new Set()
+
+data.forEach(msg=>{
+
+const myEmail =
+user.email.toLowerCase()
+
+const sender =
+msg.sender_email.toLowerCase()
+
+const receiver =
+msg.receiver_email.toLowerCase()
+
+if(sender === myEmail){
+
+chats.add(
+msg.receiver_email
+)
+
+}
+
+if(receiver === myEmail){
+
+chats.add(
+msg.sender_email
+)
+
+}
+
+})
+
+for(
+const email of chats
+){
+
+const {
+data:userData
+}
+=
+await supabaseClient
+.from("users")
+.select("*")
+.eq("email", email)
+.single()
+if(!userData){
+continue
+}
+const {
+data:deletedChats
+}
+=
+await supabaseClient
+.from("deleted_chats")
+.select("*")
+.eq("user_email", user.email)
+if(
+deletedChats?.some(
+chat => chat.chat_email === email
+)
+){
+continue
+}
+
+html += `
+
+<div
+class="chat"
+onclick="
+localStorage.setItem(
+'chatEmail',
+'${userData.email}'
+);
+
+localStorage.setItem(
+'chatUsername',
+'${userData.username}'
+);
+
+window.location.href=
+'private-chat.html';
+"
+>
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>
+👤 ${userData.username}
+</span>
+
+<span
+onclick="
+event.stopPropagation();
+deleteChat('${userData.email}');
+"
+style="
+font-size:22px;
+"
+>
+🗑️
+</span>
+
+</div>
+
+</div>
+
+`
+
+}
+
+document.getElementById(
+"usersList"
+).innerHTML = html
+
+}
+
+loadUsers()
+
+</script>
+</body>
+</html>
