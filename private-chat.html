@@ -19,13 +19,14 @@ body{
 background:
 linear-gradient(
 180deg,
-#020617,
+#026017,
 #031525,
 #041d33
 );
-height:100vh;
 display:flex;
 flex-direction:column;
+min-height:100vh;
+height:100dvh;
 overflow:hidden;
 color:white;
 }
@@ -111,6 +112,10 @@ display:flex;
 gap:12px;
 border-top:
 1px solid rgba(255,255,255,0.08);
+
+position:sticky;
+bottom:0;
+
 }
 
 #messageInput{
@@ -140,6 +145,7 @@ linear-gradient(
 );
 color:black;
 }
+    
 
 </style>
 
